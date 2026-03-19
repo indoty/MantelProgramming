@@ -1,0 +1,251 @@
+﻿@page "/readme"
+@rendermode InteractiveServer
+
+<PageTitle>ReadMe</PageTitle>
+
+<h1>ReadMe</h1>
+<p class="readme-subtitle">A walkthrough of the key files in this Blazor application.</p>
+
+<div class="file-section">
+    <div class="file-header">
+        <span class="file-icon">📄</span>
+        <h2>Home.razor</h2>
+        <span class="file-path">Components/Pages/Home.razor</span>
+    </div>
+    <div class="file-body">
+        <p>The main page of the application, responsible for uploading, validating, and analysing HTTP access log files.</p>
+
+        <h3>File Upload</h3>
+        <ul>
+            <li>
+                Provides a <strong>drag-and-drop zone</strong> and a <strong>"Browse Files" button</strong> for selecting
+                <code>.log</code> files up to 10 MB.
+            </li>
+            <li>
+                Two <code>InputFile</code> components are used: a transparent overlay covering the entire drop area
+                for drag-and-drop, and a hidden one inside the button for the file picker dialog. Both fire the
+                same <code>HandleFileUpload</code> handler.
+            </li>
+            <li>
+                The <code>@@ondragenter</code>, <code>@@ondragleave</code>, and <code>@@ondragover</code> events
+                toggle a <code>drag-over</code> CSS class for visual feedback when a file is dragged over the area.
+            </li>
+        </ul>
+
+        <h3>Format Guide</h3>
+        <ul>
+            <li>
+                Displays a colour-coded visual breakdown of the expected <em>Combined Log Format</em> so users
+                know the exact structure their log file should follow before uploading.
+            </li>
+        </ul>
+
+        <h3>Validation &amp; Feedback</h3>
+        <ul>
+            <li>
+                After a file is selected, its content is read into a <code>MemoryStream</code> and passed to
+                <code>LogFileService.Validate()</code>.
+            </li>
+            <li>
+                If validation <strong>fails</strong>, an error banner is shown with the file name and up to 5 offending
+                lines (each truncated to 80 characters). If there are more than 5 invalid lines, a summary count is appended.
+            </li>
+            <li>
+                If validation <strong>passes</strong>, a success message is displayed with the file name and size.
+            </li>
+        </ul>
+
+        <h3>Log File Analysis</h3>
+        <ul>
+            <li>
+                After a successful upload, <code>LogFileService.InterrogateLogFile()</code> is called to analyse the log content.
+            </li>
+            <li>
+                The results are displayed in a card-based grid layout showing:
+                <ul>
+                    <li><strong>Unique IP Addresses</strong> — A highlighted card with the total count.</li>
+                    <li><strong>Top 3 Most Visited URLs</strong> — An ordered list with visit counts displayed in badges.</li>
+                    <li><strong>Top 3 Most Active IP Addresses</strong> — An ordered list with request counts displayed in badges.</li>
+                </ul>
+            </li>
+            <li>
+                Previous analysis results are cleared (<code>interrogationResult = null</code>) at the start of each
+                new upload to prevent stale data from being shown.
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class="file-section">
+    <div class="file-header">
+        <span class="file-icon">🔧</span>
+        <h2>LogFileService.cs</h2>
+        <span class="file-path">Services/LogFileService.cs</span>
+    </div>
+    <div class="file-body">
+        <p>
+            A scoped service that handles log file validation and analysis, keeping business logic out of the Razor component.
+            Implements the <code>ILogFileService</code> interface to support dependency injection and unit testing.
+        </p>
+
+        <h3>ILogFileService Interface</h3>
+        <ul>
+            <li>Defined in <code>Services/ILogFileService.cs</code> with two methods: <code>Validate()</code> and <code>InterrogateLogFile()</code>.</li>
+            <li>Allows <code>Home.razor</code> to depend on an abstraction (<code>@@inject ILogFileService</code>) rather than the concrete class, enabling mocking in unit tests.</li>
+        </ul>
+
+        <h3>Regex Patterns</h3>
+        <ul>
+            <li>
+                <strong>CombinedLogFormatRegex</strong> — Validates that a line matches the Combined Log Format structure.
+                Used by <code>Validate()</code>.
+            </li>
+            <li>
+                <strong>LogEntryParserRegex</strong> — Extracts the <em>IP address</em> (group 1) and the <em>URL</em>
+                (group 2) from a log line. Used by <code>InterrogateLogFile()</code>.
+            </li>
+            <li>
+                Both use <code>[GeneratedRegex]</code> — the .NET source-generated regex approach — which is more
+                performant than <code>new Regex(..., RegexOptions.Compiled)</code> and is the recommended pattern
+                for .NET 9.
+            </li>
+        </ul>
+
+        <h3>Validate(string content)</h3>
+        <ul>
+            <li>Splits the file content into lines and tests each non-empty line against <code>CombinedLogFormatRegex</code>.</li>
+            <li>Returns a <code>LogValidationResult</code> indicating success (with a line count) or failure (with a list of invalid lines or an error message).</li>
+        </ul>
+
+        <h3>InterrogateLogFile(string content)</h3>
+        <ul>
+            <li>Parses each line with <code>LogEntryParserRegex</code> to extract the IP address and URL.</li>
+            <li>Tallies occurrences in two dictionaries using case-insensitive comparison.</li>
+            <li>
+                Returns a <code>LogInterrogationResult</code> containing:
+                <ul>
+                    <li><strong>UniqueIpAddressCount</strong> — The number of distinct IP addresses.</li>
+                    <li><strong>TopVisitedUrls</strong> — The top 3 URLs ranked by visit count.</li>
+                    <li><strong>TopActiveIpAddresses</strong> — The top 3 IP addresses ranked by request count.</li>
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class="file-section">
+    <div class="file-header">
+        <span class="file-icon">⚙️</span>
+        <h2>Program.cs</h2>
+        <span class="file-path">Program.cs</span>
+    </div>
+    <div class="file-body">
+        <p>The application entry point that configures services and the HTTP request pipeline.</p>
+
+        <h3>Service Registration</h3>
+        <ul>
+            <li>
+                <strong>AddRazorComponents / AddInteractiveServerComponents</strong> — Registers the services
+                required for Blazor component rendering and enables the Interactive Server render mode
+                (SignalR-based).
+            </li>
+            <li>
+                <strong>AddScoped&lt;ILogFileService, LogFileService&gt;</strong> — Registers the log file service
+                against its <code>ILogFileService</code> interface with a <em>scoped</em> lifetime (one instance per
+                SignalR circuit / user session). Using an interface enables dependency injection and mocking in unit tests.
+            </li>
+        </ul>
+
+    </div>
+</div>
+
+<div class="file-section">
+    <div class="file-header">
+        <span class="file-icon">🧪</span>
+    <h2>Unit Tests</h2>
+  <span class="file-path">MantelProgrammingTest.Tests/</span>
+ </div>
+    <div class="file-body">
+        <p>
+        An xUnit test project that validates the <code>LogFileService</code> business logic.
+         Tests are organised into two classes, one per method, following the
+            <em>Arrange–Act–Assert</em> pattern.
+        </p>
+
+        <h3>LogFileServiceValidateTests</h3>
+     <p class="test-file-path">Services/LogFileServiceValidateTests.cs</p>
+        <table class="test-table">
+    <thead>
+  <tr>
+            <th>Test</th>
+          <th>Verifies</th>
+       </tr>
+  </thead>
+    <tbody>
+    <tr>
+     <td><code>Validate_WithEmptyContent_ReturnsFailure</code></td>
+        <td>Empty file content returns <code>IsValid = false</code> with an "empty" error message</td>
+  </tr>
+    <tr>
+        <td><code>Validate_WithSingleValidLine_ReturnsSuccess</code></td>
+        <td>A single valid Combined Log Format line returns success with <code>LineCount = 1</code></td>
+            </tr>
+       <tr>
+ <td><code>Validate_WithMultipleValidLines_ReturnsCorrectLineCount</code></td>
+       <td>Three valid lines return success with <code>LineCount = 3</code></td>
+             </tr>
+    <tr>
+       <td><code>Validate_WithInvalidLine_ReturnsFailureWithLineNumber</code></td>
+  <td>An invalid line is reported with its correct 1-based line number</td>
+          </tr>
+    <tr>
+     <td><code>Validate_WithMixedLines_ReportsAllInvalidLines</code></td>
+          <td>All invalid lines are collected even when mixed with valid ones</td>
+    </tr>
+                <tr>
+      <td><code>Validate_WithVariousValidFormats_ReturnsSuccess</code></td>
+         <td>A <code>[Theory]</code> with 3 <code>[InlineData]</code> cases covering different valid log formats (admin user, root URL, full URL)</td>
+      </tr>
+        </tbody>
+     </table>
+
+        <h3>LogFileServiceInterrogateTests</h3>
+     <p class="test-file-path">Services/LogFileServiceInterrogateTests.cs</p>
+<table class="test-table">
+          <thead>
+   <tr>
+        <th>Test</th>
+ <th>Verifies</th>
+         </tr>
+          </thead>
+     <tbody>
+       <tr>
+       <td><code>InterrogateLogFile_WithEmptyContent_ReturnsZeroCounts</code></td>
+    <td>Empty content returns zero unique IPs and empty top lists</td>
+     </tr>
+        <tr>
+           <td><code>InterrogateLogFile_CountsUniqueIpAddresses</code></td>
+                    <td>Duplicate IPs are counted once (3 lines from 2 IPs → count = 2)</td>
+           </tr>
+           <tr>
+    <td><code>InterrogateLogFile_ReturnsTop3MostVisitedUrls</code></td>
+   <td>URLs are ranked by visit count descending, limited to top 3</td>
+              </tr>
+       <tr>
+        <td><code>InterrogateLogFile_ReturnsTop3MostActiveIps</code></td>
+          <td>IPs are ranked by request count descending, limited to top 3</td>
+          </tr>
+                <tr>
+           <td><code>InterrogateLogFile_LimitsToTop3WhenMoreExist</code></td>
+      <td>5 unique IPs/URLs only produce 3 entries in each top list</td>
+      </tr>
+ <tr>
+      <td><code>InterrogateLogFile_SkipsInvalidLines</code></td>
+         <td>Lines that don't match the log format are silently ignored</td>
+   </tr>
+     </tbody>
+        </table>
+    </div>
+</div>

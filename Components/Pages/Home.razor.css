@@ -1,0 +1,314 @@
+.upload-area {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #b0b0b0;
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    margin-top: 1rem;
+    background-color: #fafafa;
+    transition: border-color 0.25s, background-color 0.25s, box-shadow 0.25s;
+    max-width: 480px;
+}
+
+.upload-area:hover {
+    border-color: #1b6ec2;
+    background-color: #f0f7ff;
+}
+
+.upload-area.drag-over {
+    border-color: #1b6ec2;
+    background-color: #e4f0ff;
+    box-shadow: 0 0 0 4px rgba(27, 110, 194, 0.15);
+}
+
+::deep .upload-drop-zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.upload-prompt {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.75rem;
+}
+
+.upload-button {
+    position: relative;
+    z-index: 2;
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background-color: #1b6ec2;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: background-color 0.2s;
+}
+
+.upload-button:hover {
+    background-color: #155a9c;
+}
+
+.upload-button ::deep input[type="file"] {
+    display: none;
+}
+
+.upload-hint {
+    margin-top: 0.75rem;
+    font-size: 0.82rem;
+    color: #888;
+}
+
+.upload-result {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    max-width: 480px;
+}
+
+.upload-success {
+    background-color: #e6f9ed;
+    border: 1px solid #26b050;
+    color: #1a7a35;
+}
+
+.upload-error {
+    background-color: #fdecea;
+    border: 1px solid #e50000;
+    color: #c62828;
+}
+
+.upload-result-icon {
+    font-size: 1.2rem;
+}
+
+/* Format info callout */
+.format-info {
+    background: linear-gradient(135deg, #f0f7ff, #e8f0fe);
+    border: 1px solid #c4d9f2;
+    border-left: 4px solid #1b6ec2;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+    max-width: 960px;
+}
+
+.format-info-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.format-info-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #1a3d5c;
+}
+
+.format-info-icon {
+    font-size: 1.3rem;
+}
+
+.format-info-description {
+    font-size: 0.9rem;
+    color: #4a6a8a;
+    margin: 0 0 0.75rem 0;
+}
+
+.format-sample {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.35rem;
+    padding: 0.75rem 1rem;
+    background-color: #1e293b;
+    border-radius: 8px;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.token {
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.token.ip {
+    background-color: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+}
+
+.token.dim {
+    color: #64748b;
+    padding: 0.15rem 0.15rem;
+}
+
+.token.identity {
+    background-color: rgba(167, 139, 250, 0.15);
+    color: #a78bfa;
+}
+
+.token.timestamp {
+    background-color: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+}
+
+.token.method {
+    background-color: rgba(52, 211, 153, 0.15);
+    color: #34d399;
+}
+
+.token.status {
+    background-color: rgba(251, 113, 133, 0.15);
+    color: #fb7185;
+}
+
+.token.size {
+    background-color: rgba(249, 115, 22, 0.15);
+    color: #f97316;
+}
+
+.token.referer {
+    background-color: rgba(96, 165, 250, 0.15);
+    color: #60a5fa;
+}
+
+.token.useragent {
+    background-color: rgba(192, 132, 252, 0.15);
+    color: #c084fc;
+}
+
+.author {
+  font-size: 0.9rem;
+    color: #656d76;
+    margin-top: -0.5rem;
+margin-bottom: 1rem;
+}
+
+/* Analysis section */
+.analysis-section {
+    margin-top: 2rem;
+    max-width: 480px;
+}
+
+.analysis-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #24292f;
+    margin-bottom: 1.25rem;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+.analysis-card {
+    border: 1px solid #d0d7de;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.highlight-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  text-align: center;
+    background: linear-gradient(135deg, #f0f7ff, #e8f0fe);
+  border-color: #c4d9f2;
+}
+
+.analysis-card-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.analysis-card-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1b6ec2;
+    line-height: 1.2;
+}
+
+.analysis-card-label {
+    font-size: 0.9rem;
+    color: #656d76;
+    margin-top: 0.25rem;
+}
+
+.analysis-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.analysis-card-header h3 {
+    margin: 0;
+ font-size: 1rem;
+    font-weight: 600;
+    color: #24292f;
+}
+
+.analysis-list {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.analysis-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  padding: 0.45rem 0;
+    font-size: 0.9rem;
+ color: #24292f;
+ border-bottom: 1px solid #f0f0f0;
+}
+
+.analysis-list li:last-child {
+    border-bottom: none;
+}
+
+.analysis-item-label {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    color: #0550ae;
+    word-break: break-all;
+}
+
+.analysis-badge {
+    flex-shrink: 0;
+    margin-left: 0.75rem;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background-color: #ddf4ff;
+    color: #0969da;
+    border-radius: 10px;
+}

@@ -1,0 +1,142 @@
+.readme-subtitle {
+    font-size: 1rem;
+    color: #656d76;
+    margin-bottom: 1.5rem;
+}
+
+.file-section {
+    max-width: 800px;
+    margin-bottom: 1.75rem;
+    border: 1px solid #d0d7de;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.file-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1.25rem;
+    background: linear-gradient(135deg, #f6f8fa, #eef1f5);
+    border-bottom: 1px solid #d0d7de;
+}
+
+.file-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #24292f;
+}
+
+.file-icon {
+    font-size: 1.25rem;
+}
+
+.file-path {
+    margin-left: auto;
+    font-size: 0.78rem;
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    color: #656d76;
+    background-color: #e8ecf0;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+}
+
+.file-body {
+    padding: 1.25rem 1.5rem;
+}
+
+.file-body p {
+    font-size: 0.93rem;
+    color: #24292f;
+    line-height: 1.6;
+    margin: 0 0 0.85rem 0;
+}
+
+.file-body h3 {
+font-size: 0.95rem;
+  font-weight: 600;
+    color: #1a3d5c;
+    margin: 1.15rem 0 0.5rem 0;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid #e8ecf0;
+}
+
+.file-body ul {
+    margin: 0 0 0.5rem 0;
+    padding-left: 1.25rem;
+}
+
+.file-body li {
+    font-size: 0.9rem;
+    color: #24292f;
+    line-height: 1.65;
+    margin-bottom: 0.45rem;
+}
+
+.file-body code {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.82rem;
+    background-color: #f0f3f6;
+  padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    color: #0550ae;
+}
+
+.file-body em {
+    color: #656d76;
+}
+
+.file-body strong {
+    color: #24292f;
+}
+
+.test-file-path {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.78rem;
+    color: #656d76;
+    margin: -0.25rem 0 0.75rem 0;
+}
+
+.test-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.25rem;
+    font-size: 0.88rem;
+}
+
+.test-table th {
+    text-align: left;
+  padding: 0.5rem 0.75rem;
+    background-color: #f6f8fa;
+  border: 1px solid #d0d7de;
+    color: #1a3d5c;
+    font-weight: 600;
+    font-size: 0.82rem;
+  text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.test-table td {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid #e8ecf0;
+    color: #24292f;
+    line-height: 1.5;
+    vertical-align: top;
+}
+
+.test-table tr:hover td {
+    background-color: #f6f8fa;
+}
+
+.test-table code {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.78rem;
+    background-color: #f0f3f6;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    color: #0550ae;
+    word-break: break-all;
+}
