@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36623.8 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MantelProgramming", "MantelProgramming.csproj", "{D9752C9C-2BDB-4FBF-A618-851867C322DB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MantelProgrammingTest.Tests", "..\MantelProgrammingTest.Tests\MantelProgrammingTest.Tests.csproj", "{F2034A39-B679-4A64-935A-527999209BF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D9752C9C-2BDB-4FBF-A618-851867C322DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9752C9C-2BDB-4FBF-A618-851867C322DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9752C9C-2BDB-4FBF-A618-851867C322DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2034A39-B679-4A64-935A-527999209BF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2034A39-B679-4A64-935A-527999209BF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2034A39-B679-4A64-935A-527999209BF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2034A39-B679-4A64-935A-527999209BF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
