@@ -7,6 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+//Registers LogFileService against its ILogFileService interface with a scoped lifetime — one instance per SignalR circuit (effectively per user session).
+//This is what enables @inject ILogFileService LogFileService in Home.razor.
 builder.Services.AddScoped<ILogFileService, LogFileService>();
 
 var app = builder.Build();
