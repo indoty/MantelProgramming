@@ -1,7 +1,8 @@
-﻿@page "/"
+﻿razor Components\Pages\Home.razor
+@page "/"
 @rendermode InteractiveServer
 @using MantelProgrammingTest.Services
-@inject ILogFileService LogFileService
+@inject ILogFileService LogFileService      // Inject the registered log file service to handle validation and interrogation
 
 <PageTitle>Home</PageTitle>
 
@@ -116,6 +117,8 @@
 
 @code {
     private const long MaxFileSize = 10 * 1024 * 1024;
+    private const int MaxDisplayedErrors = 5;
+    private const int MaxPreviewLength = 80;
 
     private string? statusMessage;
     private string? uploadedFileName;
@@ -129,78 +132,95 @@
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
-        dropClass = string.Empty;
-        validationErrors = [];
-        interrogationResult = null;
-        var file = e.File;
+        ResetState();
+        IBrowserFile file = e.File;
 
         if (file is null)
         {
-            isError = true;
-            uploadedFileName = "none";
-            statusMessage = "No file selected.";
+            SetError("none", "No file selected.");
             return;
         }
 
         try
         {
-            // Read file content into memory for validation
-            using var memoryStream = new MemoryStream();
-            await file.OpenReadStream(maxAllowedSize: MaxFileSize).CopyToAsync(memoryStream);
-            memoryStream.Position = 0;
-
-            using var reader = new StreamReader(memoryStream);
-            var content = await reader.ReadToEndAsync();
-
-            // Validate using LogFileService
-            var result = LogFileService.Validate(content);
+            string content = await ReadFileContentAsync(file);
+            LogValidationResult result = LogFileService.Validate(content);
 
             if (!result.IsValid)
             {
-                isError = true;
-                uploadedFileName = file.Name;
-
-                if (result.ErrorMessage is not null)
-                {
-                    statusMessage = result.ErrorMessage;
-                    return;
-                }
-
-                statusMessage = $"Validation failed for \"{file.Name}\".";
-
-                // Show up to 5 invalid lines to avoid flooding the UI
-                foreach (var (lineNumber, line) in result.InvalidLines.Take(5))
-                {
-                    var preview = line.Length > 80 ? line[..80] + "…" : line;
-                    validationErrors.Add($"Line {lineNumber}: {preview}");
-                }
-
-                if (result.InvalidLines.Count > 5)
-                {
-                    validationErrors.Add($"...and {result.InvalidLines.Count - 5} more invalid line(s).");
-                }
-
+                HandleValidationFailure(file.Name, result);
                 return;
             }
 
-            // Interrogate the log file for analysis
+            // The file is valid, proceed with the interrogation
+            // For a given log file we want to know:
+                // The number of unique IP addresses
+                // The top 3 most visited URLs
+                // The top 3 most active IP addresses
             interrogationResult = LogFileService.InterrogateLogFile(content);
 
-            isError = false;
-            uploadedFileName = file.Name;
-            statusMessage = $"Uploaded \"{file.Name}\" ({file.Size:N0} bytes)";
+            SetSuccess(file.Name, $"Uploaded \"{file.Name}\" ({file.Size:N0} bytes)");
         }
         catch (IOException)
         {
-            isError = true;
-            uploadedFileName = file.Name;
-            statusMessage = $"File \"{file.Name}\" exceeds the maximum allowed size of {MaxFileSize / (1024 * 1024)} MB.";
+            SetError(file.Name, $"File \"{file.Name}\" exceeds the maximum allowed size of {MaxFileSize / (1024 * 1024)} MB.");
         }
         catch (Exception ex)
         {
-            isError = true;
-            uploadedFileName = file.Name;
-            statusMessage = $"Upload failed: {ex.Message}";
+            SetError(file.Name, $"Upload failed: {ex.Message}");
         }
+    }
+
+    private void ResetState()
+    {
+        dropClass = string.Empty;
+        validationErrors = [];
+        interrogationResult = null;
+    }
+
+    private static async Task<string> ReadFileContentAsync(IBrowserFile file)
+    {
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream(maxAllowedSize: MaxFileSize).CopyToAsync(memoryStream);
+        memoryStream.Position = 0;
+
+        using var reader = new StreamReader(memoryStream);
+        return await reader.ReadToEndAsync();
+    }
+
+    private void HandleValidationFailure(string fileName, LogValidationResult result)
+    {
+        if (result.ErrorMessage is not null)
+        {
+            SetError(fileName, result.ErrorMessage);
+            return;
+        }
+
+        SetError(fileName, $"Validation failed for \"{fileName}\".");
+
+        foreach (var (lineNumber, line) in result.InvalidLines.Take(MaxDisplayedErrors))
+        {
+            var preview = line.Length > MaxPreviewLength ? line[..MaxPreviewLength] + "…" : line;
+            validationErrors.Add($"Line {lineNumber}: {preview}");
+        }
+
+        if (result.InvalidLines.Count > MaxDisplayedErrors)
+        {
+            validationErrors.Add($"...and {result.InvalidLines.Count - MaxDisplayedErrors} more invalid line(s).");
+        }
+    }
+
+    private void SetError(string fileName, string message)
+    {
+        isError = true;
+        uploadedFileName = fileName;
+        statusMessage = message;
+    }
+
+    private void SetSuccess(string fileName, string message)
+    {
+        isError = false;
+        uploadedFileName = fileName;
+        statusMessage = message;
     }
 }
