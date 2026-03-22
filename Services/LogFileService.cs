@@ -16,6 +16,15 @@ public partial class LogFileService : ILogFileService
     [GeneratedRegex(@"^(\S+) \S+ \S+ \[.+\] ""\S+\s+(\S+)\s+[^""]*"" \d{3} (\d+|-) ""[^""]*"" ""[^""]*""$")]
     private static partial Regex LogEntryParserRegex();
 
+    /// <summary>
+    /// Validates the content of a log file against the Combined Log Format. 
+    /// It checks each line for conformity and collects any invalid lines along with their line numbers. 
+    /// If the file is empty, it returns a failure result indicating that the file is empty. 
+    /// If there are invalid lines, it returns a failure result with the list of invalid lines; 
+    /// otherwise, it returns a success result with the total line count.
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
     public LogValidationResult Validate(string content)
     {
         ArgumentNullException.ThrowIfNull(content);
@@ -41,6 +50,12 @@ public partial class LogFileService : ILogFileService
             : LogValidationResult.Success(lines.Length);
     }
 
+    /// <summary>
+    /// Interrogates the log file content to extract insights such as the count of unique IP addresses,
+    /// the top visited URLs, and the top active IP addresses.
+    /// </summary>
+    /// <param name="content"></param>
+    /// <returns></returns>
     public LogInterrogationResult InterrogateLogFile(string content)
     {
         ArgumentNullException.ThrowIfNull(content);
@@ -94,6 +109,9 @@ public partial class LogFileService : ILogFileService
     }
 }
 
+/// <summary>
+/// LogValidationResult represents the outcome of validating a log file's content. It indicates whether the validation was successful,
+/// </summary>
 public class LogValidationResult
 {
     public bool IsValid { get; init; }
@@ -111,6 +129,10 @@ public class LogValidationResult
         new() { IsValid = false, InvalidLines = invalidLines };
 }
 
+/// <summary>
+/// LogInterrogationResult represents the insights extracted from interrogating a log file's content. It includes the count of unique IP addresses,
+/// the top visited URLs, and the top active IP addresses.
+/// </summary>
 public class LogInterrogationResult
 {
     public int UniqueIpAddressCount { get; init; }
@@ -118,6 +140,18 @@ public class LogInterrogationResult
     public List<IpActivityCount> TopActiveIpAddresses { get; init; } = [];
 }
 
+/// <summary>
+/// UrlVisitCount represents the count of visits to a specific URL. 
+/// It contains the URL and the number of times it was visited.
+/// </summary>
+/// <param name="Url"></param>
+/// <param name="VisitCount"></param>
 public record UrlVisitCount(string Url, int VisitCount);
 
+/// <summary>
+/// IpActivityCount represents the count of requests made by a specific IP address. 
+/// It contains the IP address and the number of requests associated with it.
+/// </summary>
+/// <param name="IpAddress"></param>
+/// <param name="RequestCount"></param>
 public record IpActivityCount(string IpAddress, int RequestCount);
